@@ -1,0 +1,16 @@
+node_modules/
+frontend/node_modules/
+.env
+.env.*
+.env.local
+includes/config.local.php
+
+*.log
+.DS_Store
+Thumbs.db
+.cursor/
+
+# Junction targets are not part of this repo
+api/
+includes/
+images/

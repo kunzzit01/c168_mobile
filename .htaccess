@@ -1,0 +1,21 @@
+# C168 Mobile — localhost / subdirectory deploy
+php_value post_max_size 64M
+php_value upload_max_filesize 64M
+php_value max_input_vars 5000
+php_value max_input_time 300
+php_value max_execution_time 300
+php_value memory_limit 256M
+
+RewriteEngine On
+RewriteBase /c168_mobile/
+
+# Root -> mobile login
+RewriteRule ^$ /c168_mobile/login [R=302,L,NC]
+
+# API & static assets (junctions to desktop backend)
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Mobile SPA routes -> React build
+RewriteRule ^(login|home|capture|transaction|profile)(/.*)?$ /c168_mobile/frontend/dist/index.html [L,NC,QSA]
