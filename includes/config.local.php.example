@@ -1,0 +1,10 @@
+<?php
+/**
+ * EC2 / 本地覆盖数据库（复制为 config.local.php，已在 .gitignore）
+ *
+ *   cp includes/config.local.php.example includes/config.local.php
+ */
+$host = '127.0.0.1';
+$dbname = 'u857194726_c168site';
+$dbuser = 'admin';
+$dbpass = 'C168_site';

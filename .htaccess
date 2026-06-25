@@ -1,21 +1,115 @@
-# C168 Mobile — localhost / subdirectory deploy
+# PHP Configuration for Large Data Submission
+# 这些配置允许提交大量数据，解决 post_max_size 限制问题
+
+# 设置 POST 数据最大大小（必须足够大以容纳所有数据）
 php_value post_max_size 64M
+
+# 设置文件上传最大大小（应该小于或等于 post_max_size）
 php_value upload_max_filesize 64M
+
+# 设置最大输入变量数量（避免大量表单字段被截断）
 php_value max_input_vars 5000
+
+# 设置最大输入时间（秒）- 允许服务器有足够时间处理大量数据
 php_value max_input_time 300
+
+# 设置最大执行时间（秒）- 允许脚本有足够时间处理数据
 php_value max_execution_time 300
+
+# 设置内存限制（确保有足够内存处理大量数据）
 php_value memory_limit 256M
 
+# 注意：
+# 1. 这些配置需要服务器支持在 .htaccess 中设置 PHP 配置
+# 2. 某些共享主机可能不允许这些设置，需要联系主机提供商
+# 3. 如果这些设置不生效，可能需要通过 php.ini 或服务器配置来设置
+# 4. 修改后可能需要等待几分钟让配置生效
+
+# 4. 修改后可能需要等待几分钟让配置生效
+
+# --- 性能：压缩 + 静态资源缓存（Hostinger Apache / LiteSpeed）---
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript application/javascript application/json application/xml image/svg+xml
+</IfModule>
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType image/png "access plus 30 days"
+    ExpiresByType image/jpeg "access plus 30 days"
+    ExpiresByType image/webp "access plus 30 days"
+    ExpiresByType image/svg+xml "access plus 30 days"
+    ExpiresByType font/woff2 "access plus 1 year"
+</IfModule>
+
+<IfModule mod_headers.c>
+    <FilesMatch "\.(js|css|woff2?)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+    <FilesMatch "^index\.html$">
+        Header set Cache-Control "no-cache"
+    </FilesMatch>
+</IfModule>
+
 RewriteEngine On
-RewriteBase /c168_mobile/
 
-# Root -> mobile login
-RewriteRule ^$ /c168_mobile/login [R=302,L,NC]
+# Root -> SPA login
+RewriteRule ^$ /login/05659e0a-5121-427b-b5f2-7bbc43e14b23 [R=302,L,NC]
 
-# API & static assets (junctions to desktop backend)
+# Legacy PHP URLs -> /{page}/{uuid}
+RewriteRule ^index\.php$ /login/05659e0a-5121-427b-b5f2-7bbc43e14b23 [R=302,L,NC]
+RewriteRule ^dashboard\.php$ /dashboard/f758d9be-bed3-4576-87c0-7c4c39331b87 [R=302,L,NC]
+RewriteRule ^domain\.php$ /domain/312d9a6c-8f00-44e5-9b05-dfb64c9c356a [R=302,L,NC]
+RewriteRule ^announcement\.php$ /announcement/a4c78818-dd94-4668-8b1e-f6a57abdcfd2 [R=302,L,NC]
+RewriteRule ^account-list\.php$ /account-list/92a50b4f-6d9a-4e3a-b306-109a0361e9a3 [R=302,L,NC]
+RewriteRule ^add-account\.php$ /add-account/81103520-5bdf-4898-a963-4e63afd1d454 [R=302,L,NC]
+RewriteRule ^processlist\.php$ /process-list/c4838280-1a60-4ea1-972d-26db47f30179 [R=302,L,NC]
+RewriteRule ^games_process_list\.php$ /games-process-list/2e555271-6f0a-4cf4-b4a4-6561f605627f [R=302,L,NC]
+RewriteRule ^bank_process_list\.php$ /bank-process-list/ece7de68-15f0-4f0d-b185-88d5df68f873 [R=302,L,NC]
+RewriteRule ^userlist\.php$ /userlist/e7cf9194-62c9-4fc7-be66-1655421d117d [R=302,L,NC]
+RewriteRule ^useraccess\.php$ /useraccess/10049c16-fb17-4889-8228-98bf465544ef [R=302,L,NC]
+RewriteRule ^deleted-log\.php$ /deleted-log/3f5cf41e-53c2-45c5-a2c2-92e26352d8a1 [R=302,L,NC,QSA]
+RewriteRule ^deleted_log\.php$ /deleted-log/3f5cf41e-53c2-45c5-a2c2-92e26352d8a1 [R=302,L,NC,QSA]
+RewriteRule ^ownership\.php$ /ownership/51299ec5-6f49-4714-b66f-59b5b76d8fbb [R=302,L,NC]
+RewriteRule ^transaction\.php$ /transaction/cc41ab63-4ef0-49c3-adf5-13f9e5d15c6b [R=302,L,NC]
+RewriteRule ^customer_report\.php$ /customer-report/9baddd5f-c601-4b58-ace6-4d764fc2e3ec [R=302,L,NC]
+RewriteRule ^domain_report\.php$ /domain-report/c7c6db2c-40f0-4f01-81a9-8fda54d15e42 [R=302,L,NC]
+RewriteRule ^capture_maintenance\.php$ /capture-maintenance/80e7440b-4857-44d0-be55-8858a3191787 [R=302,L,NC]
+RewriteRule ^transaction_maintenance\.php$ /transaction-maintenance/54308ffa-1396-4de1-950a-6248b29e3caf [R=302,L,NC]
+RewriteRule ^formula_maintenance\.php$ /formula-maintenance/fd9b1d8e-8369-4a85-b176-b34c5c27f063 [R=302,L,NC]
+RewriteRule ^bankprocess_maintenance\.php$ /bankprocess-maintenance/e4bef560-3371-4a79-96c9-75ae055ca7d9 [R=302,L,NC]
+RewriteRule ^payment_maintenance\.php$ /payment-maintenance/0cc1f0cd-e901-48ce-8a30-038ccce3344a [R=302,L,NC]
+RewriteRule ^auto_renew\.php$ /auto-renew/148b6740-9f41-47e8-b8ca-e52db63cd4b2 [R=302,L,NC]
+RewriteRule ^auto-renew\.php$ /auto-renew/148b6740-9f41-47e8-b8ca-e52db63cd4b2 [R=302,L,NC]
+RewriteRule ^owner_secondary_password\.php$ /owner-secondary-password/41ed85ee-645d-4cb9-b269-10dfc9e9ccdc [R=302,L,NC]
+RewriteRule ^user_secondary_password\.php$ /user-secondary-password/d6bcd362-fad8-4124-9225-f6d3adc9b70d [R=302,L,NC]
+RewriteRule ^reset-password\.php$ /reset-password/d56cf733-0468-4ca0-a14a-231425bc3e83 [R=302,L,NC]
+RewriteRule ^api/users/user_secondary_password\.php$ /user-secondary-password/d6bcd362-fad8-4124-9225-f6d3adc9b70d [R=302,L,NC]
+RewriteRule ^member\.php$ /member/45793aa9-4637-452e-8820-2f4611d8b6f6 [R=302,L,NC]
+RewriteRule ^datacapture\.php$ /datacapture/b98093de-5939-4b90-befd-c47715b399d0 [R=302,L,NC,QSA]
+RewriteRule ^datacapturesummary\.php$ /datacapturesummary/35f3a1b3-8bc3-4dea-8e47-93844d4040c3 [R=302,L,NC,QSA]
+RewriteRule ^domainapi\.php$ /api/domain/domain_api.php [L,NC,QSA]
+
+RewriteRule ^transcation$ /transaction/cc41ab63-4ef0-49c3-adf5-13f9e5d15c6b [R=302,L,NC]
+RewriteRule ^customer_report$ /customer-report/9baddd5f-c601-4b58-ace6-4d764fc2e3ec [R=302,L,NC]
+RewriteRule ^domain_report$ /domain-report/c7c6db2c-40f0-4f01-81a9-8fda54d15e42 [R=302,L,NC]
+RewriteRule ^capture_maintenance$ /capture-maintenance/80e7440b-4857-44d0-be55-8858a3191787 [R=302,L,NC]
+RewriteRule ^transaction_maintenance$ /transaction-maintenance/54308ffa-1396-4de1-950a-6248b29e3caf [R=302,L,NC]
+RewriteRule ^formula_maintenance$ /formula-maintenance/fd9b1d8e-8369-4a85-b176-b34c5c27f063 [R=302,L,NC]
+RewriteRule ^bankprocess_maintenance$ /bankprocess-maintenance/e4bef560-3371-4a79-96c9-75ae055ca7d9 [R=302,L,NC]
+RewriteRule ^payment_maintenance$ /payment-maintenance/0cc1f0cd-e901-48ce-8a30-038ccce3344a [R=302,L,NC]
+RewriteRule ^auto_renew$ /auto-renew/148b6740-9f41-47e8-b8ca-e52db63cd4b2 [R=302,L,NC]
+RewriteRule ^logout$ /api/session/logout_api.php [L,NC,QSA]
+
+# /{page}/{uuid} or bare /{page} (React adds uuid) -> React build
+RewriteRule ^(login|member|reset-password|owner-secondary-password|user-secondary-password|dashboard|domain|announcement|auto-renew|account-list|add-account|process-list|games-process-list|bank-process-list|userlist|useraccess|deleted-log|ownership|datacapture|datacapturesummary|transaction|customer-report|domain-report|capture-maintenance|transaction-maintenance|formula-maintenance|bankprocess-maintenance|payment-maintenance)(/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})?$ /frontend/dist/index.html [L,NC,QSA]
+RewriteRule ^transaction/payment-history(/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})?$ /frontend/dist/index.html [L,NC,QSA]
+
+# Old /p/{uuid} -> React redirect to /{page}/{uuid}
+RewriteRule ^p/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$ /frontend/dist/index.html [L,NC,QSA]
+
+# Existing files/directories are served normally
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
-
-# Mobile SPA routes -> React build
-RewriteRule ^(login|home|capture|transaction|profile)(/.*)?$ /c168_mobile/frontend/dist/index.html [L,NC,QSA]

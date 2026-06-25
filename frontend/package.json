@@ -1,17 +1,34 @@
 {
-  "name": "c168-mobile",
+  "name": "eazycount-login-spa",
   "private": true,
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node ./scripts/warn-dist-css-edits.mjs",
     "build": "vite build",
+    "postbuild": "node ./scripts/cleanup-dist-css.mjs",
+    "prebuild:site": "node ./scripts/warn-dist-css-edits.mjs",
+    "build:site": "vite build",
+    "postbuild:site": "node ./scripts/cleanup-dist-css.mjs",
+    "prebuild:watch": "node ./scripts/warn-dist-css-edits.mjs",
+    "build:watch": "vite build --watch",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.100.6",
+    "@tanstack/react-table": "^8.21.3",
+    "@tanstack/react-virtual": "^3.13.12",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "decimal.js": "^10.4.3",
+    "flatpickr": "^4.6.13",
+    "lucide-react": "^1.14.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.28.0"
+    "react-router-dom": "^6.28.0",
+    "recharts": "^2.15.0",
+    "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.2.4",

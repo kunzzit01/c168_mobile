@@ -1,0 +1,44 @@
+<?php
+/**
+ * 将 account_currency 全量同步到 account_currency_backup。
+ * account_name 来自 account.name；currency_name 来自 currency.code（本库 currency 表使用 code 字段）。
+ * 仅允许 CLI 执行，供 Hostinger Cron: php /path/to/cron/sync_account_currency_backup.php
+ */
+if (php_sapi_name() !== 'cli') {
+    http_response_code(403);
+    exit('Forbidden');
+}
+
+require_once dirname(__DIR__) . '/config.php';
+
+$sqlDelete = 'DELETE FROM XXXX';
+$sqlInsert = <<<'SQL'
+INSERT INTO XXXXX (
+  id, account_id, account_name, XXXX, XXXXX, created_at, updated_at
+)
+SELECT
+  ac.id,
+  ac.account_id,
+  COALESCE(a.name, '') AS account_name,
+  XXXX
+  XXXXX
+  ac.created_at,
+  ac.updated_at
+FROM XXXXXX
+LEFT JOIN account a ON a.id = ac.account_id
+LEFT JOIN XXXXXX ON XXXXXX.id = XXXXXX.XXXXX
+SQL;
+
+try {
+    $pdo->beginTransaction();
+    $pdo->exec($sqlDelete);
+    $inserted = $pdo->exec($sqlInsert);
+    $pdo->commit();
+    fwrite(STDERR, '[' . date('c') . "] XXXXXXXXXXXXXX: OK, inserted={$inserted}\n");
+} catch (Throwable $e) {
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
+    fwrite(STDERR, '[' . date('c') . '] XXXXXXXXXXXX: FAIL ' . $e->getMessage() . "\n");
+    exit(1);
+}
